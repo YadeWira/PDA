@@ -1,0 +1,21 @@
+PDA
+Copyright (c) 2026 Yade Bravo (YadeWira)
+Licensed under the MIT License (see LICENSE).
+
+Family code
+-----------
+
+The command, the container's checks, the durable writes, the reports and
+the BLAKE3 unit come from POA (https://github.com/YadeWira/POA), which took
+them from PJA (https://github.com/YadeWira/PJA) by way of PMPA; all are by
+the same author under the same MIT license.
+
+BLAKE3 is by Jack O'Connor, Jean-Philippe Aumasson, Samuel Neves and Zooko
+Wilcox-O'Hearn; pas/pdablake3.pas is a Pascal implementation checked
+against the official test vectors (pas/tests/kat.txt).
+
+Test documents
+--------------
+
+The files in tests/doc are made from nothing by scripts/mksamples.py and
+hold no third-party content.

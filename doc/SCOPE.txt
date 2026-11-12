@@ -1,4 +1,4 @@
-PDA (packDocument Algorithm) - scope and plan, concept phase (2026-11-02)
+PDA (packDocument Algorithm) - scope and plan, early development (2026-11-12)
 #########################################################################
 
 PDA is the document member of the family. Its job is exactly the "unpack first" step: it opens the
@@ -7,40 +7,44 @@ byte (deflate, LZW, bzip2...), sends each stream to the sibling that handles it 
 the original identically. Same rules as the siblings: byte-for-byte restoration, verify before
 writing, store as-is what cannot be taken.
 
-1. The family and what PDA takes from each
-==========================================
+1. The family and what PDA takes from each (states as of 2026-11-12)
+====================================================================
 
-+---------+--------------------------------+------------------+------------------------------------------+
-| Project | Covers                         | State            | Used by PDA for                          |
-+=========+================================+==================+==========================================+
-| PJA     | JPEG, JPEG-LS, JPEG 2000       | 0.9.x (stable    | JPEG/DCT and JPEG 2000 images (PDF       |
-|         |                                | format),         | JPXDecode); also the code base (BLAKE3,  |
-|         |                                | 7-Zip/zpaq       | arithmetic coder, model)                 |
-|         |                                | plugin           |                                          |
-+---------+--------------------------------+------------------+------------------------------------------+
-| PPA     | PNG, APNG, MNG, JNG            | v0.1.0           | PNG images                               |
-+---------+--------------------------------+------------------+------------------------------------------+
-| PRA     | raster: PNM, BMP, TIFF, PSD,   | in development   | raw PDF images (after inflate), BMP/DIB, |
-|         | PICT, ILBM, PCX, TGA, ICO,     |                  | TIFF, PICT, PCX, ILBM, ICO               |
-|         | DDS, DICOM, EXR...             |                  |                                          |
-+---------+--------------------------------+------------------+------------------------------------------+
-| PMPA    | MPEG audio: MP1, MP2, MP3      | in development   | MP3/MP2 in PPT/PPTX/EPUB/PDF and         |
-|         |                                |                  | attachments                              |
-+---------+--------------------------------+------------------+------------------------------------------+
-| PAIA    | animated images: GIF, WebP,    | proof of concept | GIF and WebP; its reconstructible LZW    |
-|         | FLI/FLC, ANI, IFF ANIM         |                  |                                          |
-+---------+--------------------------------+------------------+------------------------------------------+
-| POA     | Ogg: Vorbis, Opus, FLAC,       | early            | Ogg audio in PPTX/ODP/EPUB 3/Keynote and |
-|         | Speex, Theora                  | development;     | attachments                              |
-|         |                                | libpoa + 7-Zip   |                                          |
-|         |                                | plugin           |                                          |
-+---------+--------------------------------+------------------+------------------------------------------+
-| tovyCT  | text (BWT + QLFC)              | 1.0              | all extracted text: XML, HTML, PDF       |
-|         |                                |                  | content streams, RTF...                  |
-+---------+--------------------------------+------------------+------------------------------------------+
-| PDA     | document containers +          | concept          | everything else: containers, deflate &   |
-|         | precompression                 |                  | co., fonts, WMF/EMF, recursion           |
-+---------+--------------------------------+------------------+------------------------------------------+
++---------+--------------------------------+------------------------+--------------------------------------+
+| Project | Covers                         | State                  | Used by PDA for                      |
++=========+================================+========================+======================================+
+| PJA     | JPEG, JPEG-LS, JPEG 2000       | 0.9.8 (formats stable  | JPEG and JPEG 2000 images (PDF       |
+|         |                                | since 0.9.0); libpja,  | DCTDecode/JPXDecode); also the code  |
+|         |                                | 7-Zip and zpaq-std     | base                                 |
+|         |                                | plugins                |                                      |
++---------+--------------------------------+------------------------+--------------------------------------+
+| PPA     | PNG, APNG, MNG, JNG            | 0.1.1; libppa, 7-Zip   | PNG images; the family's             |
+|         |                                | plugin                 | reconstructible deflate (shared with |
+|         |                                |                        | PDA)                                 |
++---------+--------------------------------+------------------------+--------------------------------------+
+| PRA     | raster: PNM, BMP, TIFF, PSD,   | 0.1.0                  | raw PDF images (after inflate),      |
+|         | PICT, ILBM, PCX, TGA, ICO,     |                        | BMP/DIB, TIFF, PICT, PCX, ILBM, ICO  |
+|         | DDS, DICOM, EXR...             |                        |                                      |
++---------+--------------------------------+------------------------+--------------------------------------+
+| PMPA    | MPEG audio: MP1, MP2, MP3      | 0.4.0 (0.5.0 with      | MP3/MP2 in PPT/PPTX/EPUB/PDF and     |
+|         |                                | libpmpa coming)        | attachments                          |
++---------+--------------------------------+------------------------+--------------------------------------+
+| PAIA    | animated images: GIF, WebP,    | 0.1.0                  | GIF and WebP; its reconstructible    |
+|         | FLI/FLC, ANI, IFF ANIM         |                        | LZW                                  |
++---------+--------------------------------+------------------------+--------------------------------------+
+| POA     | Ogg: Vorbis, Opus, FLAC,       | early development, no  | Ogg audio in PPTX/ODP/EPUB 3/Keynote |
+|         | Speex, Theora                  | release; libpoa, 7-Zip | and attachments                      |
+|         |                                | plugin                 |                                      |
++---------+--------------------------------+------------------------+--------------------------------------+
+| tovyCT  | text (BWT + QLFC)              | 1.1.0 (format v4       | all extracted text: XML, HTML, PDF   |
+|         |                                | frozen)                | content streams, RTF...              |
++---------+--------------------------------+------------------------+--------------------------------------+
+| PDA     | document containers +          | early development:     | everything else: containers, deflate |
+|         | precompression                 | base layer (command,   | & co., fonts, WMF/EMF, recursion     |
+|         |                                | .pda container,        |                                      |
+|         |                                | checks); stores every  |                                      |
+|         |                                | file for now           |                                      |
++---------+--------------------------------+------------------------+--------------------------------------+
 
 2. Documents (containers)
 =========================
@@ -253,6 +257,7 @@ parts are used).
 |     | JPEG, PNG, XML, fonts...)                                      |                                  |
 +-----+----------------------------------------------------------------+----------------------------------+
 | 1   | Base: .pda container, CLI, store mode with verification        | pda a / pda x work on any file   |
+|     |                                                                | (done, 2026-11-12)               |
 +-----+----------------------------------------------------------------+----------------------------------+
 | 2   | Reconstructible deflate                                        | 100% of the corpus deflate       |
 |     |                                                                | streams rebuilt                  |

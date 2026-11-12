@@ -4,8 +4,20 @@
 Office, OpenDocument, EPUB, CHM, ...), in FreePascal with C; no libraries.
 A new project of the [pack-algorithm family](https://github.com/YadeWira/PJA).
 
-> **Status: concept.** There is no code yet. The scope and the plan are in
+> **Status: early development, nothing to download yet.** The base layer
+> works: the `pda` command, the `.pda` container and the checks around them.
+> It does not compress anything yet: every file is stored as it is, until
+> the document parsers and codecs arrive. The scope and the plan are in
 > [doc/SCOPE.txt](doc/SCOPE.txt). This is a long-term project.
+
+    pda a report.pdf       # -> report.pdf.pda
+    pda x report.pdf.pda   # -> report.pdf, the same file byte for byte
+
+Nothing is written under an output's name unless it verified: `a`
+decompresses its own result and compares it with the input first, and `x`
+checks the size and the BLAKE3-128 the `.pda` carries. The command is
+described in [doc/CLI.md](doc/CLI.md), the file in
+[doc/FORMAT.md](doc/FORMAT.md) (format 1, not frozen).
 
 A document is a tree of streams that are already compressed or encoded:
 a DOCX is a ZIP of XML and images, a PDF holds Flate streams, fonts and
@@ -32,6 +44,14 @@ basic precompression (store and deflate).
 | [POA](https://github.com/YadeWira/POA) | Ogg (Vorbis, Opus, FLAC, Speex, Theora) | (new) |
 | **PDA** | documents (PDF, Office, OpenDocument, EPUB, CHM, ...) | (new) |
 
+## Building
+
+FreePascal 3.2.2, no libraries:
+
+    ./build.sh               # build/pda and build/tests/*
+    sh .github/test.sh       # what CI runs: unit tests, the command's checks,
+                             # selftest and the round trip of tests/doc
+
 ## License
 
-MIT (see [LICENSE](LICENSE)).
+MIT (see [LICENSE](LICENSE)); family code and credits in [NOTICE](NOTICE).
