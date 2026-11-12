@@ -1,0 +1,12 @@
+*.o
+*.ppu
+*.a
+*.exe
+build*/
+__pycache__/
+credenciales.md
+handoff.md
+*.pda
+hash.txt
+# working notes in Spanish (the repo is in English)
+doc/PLAN.md
