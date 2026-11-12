@@ -1,0 +1,8 @@
+* text=auto eol=lf
+# test documents and .pda files are bytes: never convert their line ends
+tests/doc/** binary
+*.pdf binary
+*.docx binary
+*.rtf binary
+*.pda binary
+*.bat text eol=crlf
